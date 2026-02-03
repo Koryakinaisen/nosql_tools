@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: mongodb
+    hostname: mongodb
+    build:
+      context: db
+      dockerfile: Dockerfile
+    image: mongodb_app:0.8
+    env_file:
+      - backend/env/dev/.env.dev.db
+      - backend/env/.env.collections
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app_network
+
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    container_name: backend
+    image: backend_app:0.8
+    ports:
+     - "127.0.0.1:8000:8000"
+    depends_on:
+      - db
+    networks:
+      - app_network
+
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    image: frontend_app:0.8
+    ports:
+      - "127.0.0.1:5173:5173"
+    depends_on:
+      - backend
+    networks:
+      - app_network
+
+volumes:
+  mongo_data:
+
+networks:
+  app_network:
+    driver: bridge

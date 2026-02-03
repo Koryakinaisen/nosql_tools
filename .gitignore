@@ -1,0 +1,7 @@
+.venv/
+.idea/
+.run/
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
